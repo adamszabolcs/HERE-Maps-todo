@@ -4,6 +4,7 @@ import com.codecool.todo.model.Todo;
 import com.codecool.todo.repository.TodoRepository;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.extern.slf4j.Slf4j;
@@ -12,10 +13,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +56,27 @@ public class WebController {
             arr.put(jo);
         }
         return arr.toString(2);
+    }
 
+    @PostMapping(value="/todo", headers = "Accept=application/json")
+    public ResponseEntity<?> saveTodo(@RequestBody String coords) {
+        ObjectMapper mapper = new ObjectMapper();
+        Double latitude = 0.0;
+        Double longitude = 0.0;
+        try {
+            JsonNode dataTree = mapper.readTree(coords);
+            latitude = mapper.treeToValue(dataTree.get("lat"), Double.class);
+            longitude = mapper.treeToValue(dataTree.get("lng"), Double.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Todo todo = Todo.builder()
+                .latitude(latitude)
+                .longitude(longitude)
+                .build();
+        todoRepository.save(todo);
+        log.info("todo saved!");
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
