@@ -4,16 +4,18 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Controller
+@RestController
+@Slf4j
+@CrossOrigin
 public class WebController {
 
     @Value("${app.id}")
@@ -22,12 +24,17 @@ public class WebController {
     @Value("${app.code}")
     private String appCode;
 
-    @GetMapping("/api/map")
-    public Map<String, String> addAPIKey() throws IOException {
+    @GetMapping("/map")
+    public Map<String, String> addAPIKey() {
         Map<String, String> jsonString = new HashMap<>();
         jsonString.put("hereMapsAppId", appId);
         jsonString.put("hereMapsAppCode", appCode);
         return jsonString;
+    }
+
+    @GetMapping("/hello")
+    public String hello() {
+        return "Hello!!!!";
     }
 
 }
