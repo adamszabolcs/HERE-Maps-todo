@@ -15,7 +15,18 @@ let hereMap = {
 
     _zoom: "16",
 
+    _markers: [],
 
+
+    getApiKey: function () {
+        fetch("/map")
+            .then(response => response.json())
+            .then(responseData => {
+                this._app_code = responseData.hereMapsAppCode,
+                    this._app_id = responseData.hereMapsAppId
+            })
+            .then(this.setCoordinates());
+    },
 
     setCoordinates: function () {
         if (navigator.geolocation) {
@@ -48,16 +59,6 @@ let hereMap = {
         hereMap.renderMap();
     },
 
-    getApiKey: function () {
-        fetch("/map")
-            .then(response => response.json())
-            .then(responseData => {
-                this._app_code = responseData.hereMapsAppCode,
-                this._app_id = responseData.hereMapsAppId
-            })
-            .then(this.setCoordinates());
-    },
-
     renderMap: function () {
         this.createDivForMap();
         this._platform = new H.service.Platform({
@@ -80,20 +81,37 @@ let hereMap = {
         let ui = new H.ui.UI.createDefault(this._map, layer);
         behavior.disable(H.mapevents.Behavior.DBLTAPZOOM);
         this.addUserPosition();
+        this.getMarkers();
         mapEvent.dblTap();
     },
 
-    addUserPosition: function () {
+    createMarker: function(lat, lng) {
         let icon = new H.map.Icon('./image/pin.png'),
-            coords = {lat: this._center.lat, lng: this._center.lng},
+            coords = {lat: lat, lng: lng},
             marker = new H.map.Marker(coords, {icon: icon});
 
         this._map.addObject(marker);
     },
 
-    addMarker: function(lat, lng) {
+    getMarkers: function () {
+        fetch("/list")
+            .then(response => response.json())
+            .then(responseData => {
+                this._markers = responseData;
+                this.addMarkersToMap();
+            })
+    },
+
+    addMarkersToMap: function () {
+        for (marker of this._markers) {
+            console.log(marker.latitude, marker.longitude);
+            this.createMarker(marker.latitude, marker.longitude);
+        }
+    },
+
+    addUserPosition: function () {
         let icon = new H.map.Icon('./image/pin.png'),
-            coords = {lat: lat, lng: lng},
+            coords = {lat: this._center.lat, lng: this._center.lng},
             marker = new H.map.Marker(coords, {icon: icon});
 
         this._map.addObject(marker);
