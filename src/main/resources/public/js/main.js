@@ -1,5 +1,5 @@
 function init() {
-    hereMap.setCoordinates();
+    hereMap.getApiKey();
 }
 
 init();
