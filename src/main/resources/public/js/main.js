@@ -1,5 +1,5 @@
 function init() {
-    showmap.setCoordinates();
+    hereMap.setCoordinates();
 }
 
 init();
