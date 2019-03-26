@@ -1,4 +1,4 @@
-let map = {
+let hereMap = {
 
     _center: {
         lat: '',
@@ -14,6 +14,8 @@ let map = {
     _map: null,
 
     _zoom: "16",
+
+
 
     setCoordinates: function () {
         if (navigator.geolocation) {
@@ -36,7 +38,6 @@ let map = {
         let appendedDiv = "";
         if (this._center.lat !== '') {
             appendedDiv = `<div class="app" id="mapplace">
-                                    <h4>Write out this!</h4>
                                 </div>`;
         } else {
             appendedDiv = `<div class="app">
@@ -44,35 +45,45 @@ let map = {
             </div>`;
         }
         dom.appendToElement(rootDiv, appendedDiv);
-        map.renderMap();
+        hereMap.renderMap();
     },
 
     renderMap: function () {
         this.createDivForMap();
         this._platform = new H.service.Platform({
-            app_id: dom._app_id,
-            app_code: dom._app_code,
-            center: dom._center,
+            app_id: this._app_id,
+            app_code: this._app_code,
+            center: this._center,
             zoom: this._zoom
         });
 
         let layer = this._platform.createDefaultLayers();
-        let container = document.getElementById("map");
+        let container = document.getElementById("hereMap");
 
         this._map = new H.Map(container, layer.normal.map, {
             zoom: this._zoom,
-            center: dom._center,
+            center: this._center,
         });
 
-        let events = new H.mapevents.MapEvents(this._map);
+        var events = new H.mapevents.MapEvents(this._map);
         let behavior = new H.mapevents.Behavior(events);
         let ui = new H.ui.UI.createDefault(this._map, layer);
+        behavior.disable(H.util.Disposable.DBLTAPZOOM);
         this.addUserPosition();
+        mapEvent.dblTap();
     },
 
     addUserPosition: function () {
-        let icon = new H.map.Icon('pin.png'),
-            coords = {lat: dom._center.lat, lng: dom._center.lng},
+        let icon = new H.map.Icon('./image/pin.png'),
+            coords = {lat: this._center.lat, lng: this._center.lng},
+            marker = new H.map.Marker(coords, {icon: icon});
+
+        this._map.addObject(marker);
+    },
+
+    addMarker: function(lat, lng) {
+        let icon = new H.map.Icon('./image/pin.png'),
+            coords = {lat: lat, lng: lng},
             marker = new H.map.Marker(coords, {icon: icon});
 
         this._map.addObject(marker);
@@ -80,7 +91,7 @@ let map = {
 
     createDivForMap: function () {
         let appendableDiv = document.getElementById("mapplace");
-        let appendedDiv = `<div id="map" style="width: 100%; height: 400px; background-color: grey"></div>`;
+        let appendedDiv = `<div id="hereMap" style="width: 100%; height: 400px; background-color: grey"></div>`;
         dom.appendToElement(appendableDiv, appendedDiv);
     },
 };
