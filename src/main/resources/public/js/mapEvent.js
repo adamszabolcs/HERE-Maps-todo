@@ -4,7 +4,7 @@ let mapEvent = {
         hereMap._map.addEventListener('dbltap', function(evt) {
             let coord = hereMap._map.screenToGeo(evt.currentPointer.viewportX,
                 evt.currentPointer.viewportY);
-            hereMap.addMarker(coord.lat, coord.lng);
+            hereMap.createMarker(coord.lat, coord.lng);
         });
     }
 
