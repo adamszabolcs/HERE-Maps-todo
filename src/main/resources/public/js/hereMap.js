@@ -68,7 +68,7 @@ let hereMap = {
         var events = new H.mapevents.MapEvents(this._map);
         let behavior = new H.mapevents.Behavior(events);
         let ui = new H.ui.UI.createDefault(this._map, layer);
-        behavior.disable(H.util.Disposable.DBLTAPZOOM);
+        behavior.disable(H.mapevents.Behavior.DBLTAPZOOM);
         this.addUserPosition();
         mapEvent.dblTap();
     },
