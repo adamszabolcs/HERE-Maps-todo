@@ -5,8 +5,8 @@ let hereMap = {
         lng: '',
     },
 
-    _app_id: "Hcu7cDJnXgzkmNhIrujH",
-    _app_code: "rJFx0NRya2Y5FdWQehEDkg",
+    _app_id: "",
+    _app_code: "",
 
     _error: null,
 
@@ -29,7 +29,7 @@ let hereMap = {
                 }
             );
         } else {
-            return null;
+            this.showMap();
         }
     },
 
@@ -46,6 +46,16 @@ let hereMap = {
         }
         dom.appendToElement(rootDiv, appendedDiv);
         hereMap.renderMap();
+    },
+
+    getApiKey: function () {
+        fetch("/map")
+            .then(response => response.json())
+            .then(responseData => {
+                this._app_code = responseData.hereMapsAppCode,
+                this._app_id = responseData.hereMapsAppId
+            })
+            .then(this.setCoordinates());
     },
 
     renderMap: function () {
