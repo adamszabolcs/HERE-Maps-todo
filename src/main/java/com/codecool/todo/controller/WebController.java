@@ -59,18 +59,21 @@ public class WebController {
     }
 
     @PostMapping(value="/todo", headers = "Accept=application/json")
-    public ResponseEntity<?> saveTodo(@RequestBody String coords) {
+    public ResponseEntity<?> saveTodo(@RequestBody String data) {
         ObjectMapper mapper = new ObjectMapper();
         Double latitude = 0.0;
         Double longitude = 0.0;
+        String title = "";
         try {
-            JsonNode dataTree = mapper.readTree(coords);
+            JsonNode dataTree = mapper.readTree(data);
             latitude = mapper.treeToValue(dataTree.get("lat"), Double.class);
             longitude = mapper.treeToValue(dataTree.get("lng"), Double.class);
+            title = mapper.treeToValue(dataTree.get("title"), String.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
         Todo todo = Todo.builder()
+                .title(title)
                 .latitude(latitude)
                 .longitude(longitude)
                 .build();
