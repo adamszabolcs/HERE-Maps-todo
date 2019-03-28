@@ -1,5 +1,5 @@
 function init() {
-    fetches.getApiKey();
+    communication.getApiKey();
 }
 
 init();
