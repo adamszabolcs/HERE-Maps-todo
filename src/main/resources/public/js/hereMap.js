@@ -17,17 +17,6 @@ let hereMap = {
 
     _markers: [],
 
-
-    getApiKey: function () {
-        fetch("/map")
-            .then(response => response.json())
-            .then(responseData => {
-                this._app_code = responseData.hereMapsAppCode,
-                    this._app_id = responseData.hereMapsAppId
-            })
-            .then(this.setCoordinates());
-    },
-
     setCoordinates: function () {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -81,7 +70,7 @@ let hereMap = {
         let ui = new H.ui.UI.createDefault(this._map, layer);
         behavior.disable(H.mapevents.Behavior.DBLTAPZOOM);
         this.addUserPosition();
-        this.getMarkers();
+        fetches.getMarkers();
         mapEvent.dblTap();
     },
 
@@ -91,15 +80,6 @@ let hereMap = {
             marker = new H.map.Marker(coords, {icon: icon});
 
         this._map.addObject(marker);
-    },
-
-    getMarkers: function () {
-        fetch("/list")
-            .then(response => response.json())
-            .then(responseData => {
-                this._markers = responseData;
-                this.addMarkersToMap();
-            })
     },
 
     addMarkersToMap: function () {
