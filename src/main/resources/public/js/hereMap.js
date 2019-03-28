@@ -10,12 +10,18 @@ let hereMap = {
 
     _error: null,
 
-    _platform: null,
-    _map: null,
-
     _zoom: "16",
 
     _markers: [],
+
+    map: {
+        _platform: null,
+        _map: null,
+        _ui: null,
+        _events: null,
+        _behavior: null,
+        _group: null,
+    },
 
     setCoordinates: function () {
         if (navigator.geolocation) {
@@ -41,8 +47,8 @@ let hereMap = {
                                 </div>`;
         } else {
             appendedDiv = `<div class="app">
-                <h4>Please allow location to use this website properly!</h4>
-            </div>`;
+                                <h4>Please allow location to use this website properly!</h4>
+                            </div>`;
         }
         dom.appendToElement(rootDiv, appendedDiv);
         hereMap.renderMap();
@@ -50,42 +56,45 @@ let hereMap = {
 
     renderMap: function () {
         this.createDivForMap();
-        this._platform = new H.service.Platform({
+        this.map._platform = new H.service.Platform({
             app_id: this._app_id,
             app_code: this._app_code,
             center: this._center,
             zoom: this._zoom
         });
 
-        let layer = this._platform.createDefaultLayers();
+        let layer = this.map._platform.createDefaultLayers();
         let container = document.getElementById("hereMap");
 
-        this._map = new H.Map(container, layer.normal.map, {
+        this.map._map = new H.Map(container, layer.normal.map, {
             zoom: this._zoom,
             center: this._center,
         });
+        this.map._events = new H.mapevents.MapEvents(this.map._map);
+        this.map._behavior = new H.mapevents.Behavior(this.map._events);
+        this.map._ui = new H.ui.UI.createDefault(this.map._map, layer);
+        this.map._group = new H.map.Group();
 
-        var events = new H.mapevents.MapEvents(this._map);
-        let behavior = new H.mapevents.Behavior(events);
-        let ui = new H.ui.UI.createDefault(this._map, layer);
-        behavior.disable(H.mapevents.Behavior.DBLTAPZOOM);
+        this.map._map.addObject(this.map._group);
+        this.map._behavior.disable(H.mapevents.Behavior.DBLTAPZOOM);
         this.addUserPosition();
-        fetches.getMarkers();
+        communication.getMarkers();
         mapEvent.dblTap();
+        this.searchForCategory();
     },
 
-    createMarker: function(lat, lng) {
+    createMarker: function(lat, lng, data) {
         let icon = new H.map.Icon('./image/pin.png'),
             coords = {lat: lat, lng: lng},
             marker = new H.map.Marker(coords, {icon: icon});
+        marker.setData(data);
 
-        this._map.addObject(marker);
+        this.map._group.addObject(marker);
     },
 
     addMarkersToMap: function () {
         for (marker of this._markers) {
-            console.log(marker.latitude, marker.longitude);
-            this.createMarker(marker.latitude, marker.longitude);
+            this.createMarker(marker.latitude, marker.longitude, marker.title);
         }
     },
 
@@ -94,7 +103,10 @@ let hereMap = {
             coords = {lat: this._center.lat, lng: this._center.lng},
             marker = new H.map.Marker(coords, {icon: icon});
 
-        this._map.addObject(marker);
+        marker.setData("Here you are!");
+
+        this.map._group.addObject(marker);
+        mapEvent.addBubbleInfo();
     },
 
     createDivForMap: function () {
@@ -102,4 +114,26 @@ let hereMap = {
         let appendedDiv = `<div id="hereMap" style="width: 100%; height: 400px; background-color: grey"></div>`;
         dom.appendToElement(appendableDiv, appendedDiv);
     },
+
+    searchForCategory: function () {
+        let explore = new H.places.Explore(this.map._platform.getPlacesService()), exploreResult, error;
+
+        let params = {
+            'cat' : 'petrol-station',
+            'in' : this._center.lat + ',' + this._center.lng + ";r=2000"
+        };
+
+        explore.request(params, {}, onResult, onError);
+
+        function onResult(data) {
+            exploreResult = data;
+            console.log("Search result: ");
+            console.log(data);
+        }
+
+        function onError(data) {
+            error = data;
+        }
+
+    }
 };
