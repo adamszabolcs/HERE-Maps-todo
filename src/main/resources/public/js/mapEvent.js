@@ -1,23 +1,22 @@
 let mapEvent = {
 
     dblTap: function () {
-        hereMap._map.addEventListener('dbltap', function(evt) {
-            let coord = hereMap._map.screenToGeo(evt.currentPointer.viewportX,
+        hereMap.map._map.addEventListener('dbltap', function(evt) {
+            let coord = hereMap.map._map.screenToGeo(evt.currentPointer.viewportX,
                 evt.currentPointer.viewportY);
-            hereMap.createMarker(coord.lat, coord.lng);
-            mapEvent.sendToBackend(coord);
+            let title = "This is a marker";
+            hereMap.createMarker(coord.lat, coord.lng, title);
+            communication.sendTodoToBackend(coord, title);
         });
     },
 
-    sendToBackend: function(coord) {
-        fetch("/todo", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(coord),
-        })
-            .then(response => console.log("success: " + JSON.stringify(response)))
-    },
+    addBubbleInfo: function () {
+        hereMap.map._group.addEventListener('tap', function (evt) {
+            let bubble = new H.ui.InfoBubble(evt.target.getPosition(), {
+                content: evt.target.getData()
+            });
+            hereMap.map._ui.addBubble(bubble);
+        }, false);
+    }
 
 };
