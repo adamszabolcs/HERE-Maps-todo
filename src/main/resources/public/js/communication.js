@@ -1,4 +1,4 @@
-let fetches = {
+let communication = {
 
 
     getApiKey: function () {
@@ -21,7 +21,7 @@ let fetches = {
             .then(this.getNearCategories());
     },
 
-    sendToBackend: function(coord, title) {
+    sendTodoToBackend: function(coord, title) {
         let response = JSON.stringify({
             lat : coord.lat,
             lng : coord.lng,
