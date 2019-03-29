@@ -12,8 +12,6 @@ let hereMap = {
 
     _zoom: "16",
 
-    _markers: [],
-
     map: {
         _platform: null,
         _map: null,
@@ -74,7 +72,6 @@ let hereMap = {
         this.map._behavior = new H.mapevents.Behavior(this.map._events);
         this.map._ui = new H.ui.UI.createDefault(this.map._map, layer);
         this.map._group = new H.map.Group();
-
         this.map._map.addObject(this.map._group);
         this.map._behavior.disable(H.mapevents.Behavior.DBLTAPZOOM);
         this.addUserPosition();
@@ -92,8 +89,8 @@ let hereMap = {
         this.map._group.addObject(marker);
     },
 
-    addMarkersToMap: function () {
-        for (marker of this._markers) {
+    addMarkersToMap: function (markers) {
+        for (marker of markers) {
             this.createMarker(marker.latitude, marker.longitude, marker.title);
         }
     },
@@ -127,8 +124,6 @@ let hereMap = {
 
         function onResult(data) {
             exploreResult = data;
-            console.log("Search result: ");
-            console.log(data);
         }
 
         function onError(data) {
