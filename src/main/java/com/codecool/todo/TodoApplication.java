@@ -18,16 +18,5 @@ public class TodoApplication {
         SpringApplication.run(TodoApplication.class, args);
     }
 
-    @Bean
-    public CommandLineRunner init() {
-        return args -> {
-            Todo todo = Todo.builder()
-                    .title("First")
-                    .latitude(47.474742084506396)
-                    .longitude(19.03696279731443)
-                    .build();
-            repository.save(todo);
-        };
-    }
 
 }
