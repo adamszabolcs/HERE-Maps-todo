@@ -2,17 +2,17 @@ let mapEvent = {
 
     _coord: null,
 
-    openModal: function () {
-        $('#exampleModal').on('show.bs.modal', function (event) {
-            $('#exampleModal').modal('show');
-        })
-    },
-
     sendInfoFromModal: function () {
         let todoTitle = document.getElementById("message-text").value;
-        hereMap.createMarker(mapEvent._coord.lat, mapEvent._coord.lng, todoTitle);
         communication.sendTodoToBackend(mapEvent._coord, todoTitle);
         $('#exampleModal').modal('hide');
+    },
+
+    addModalSubmitListener: function () {
+        let submitButton = document.getElementById("send");
+        submitButton.addEventListener('click', function() {
+            mapEvent.sendInfoFromModal();
+        })
     },
 
     dblTap: function () {
@@ -22,7 +22,6 @@ let mapEvent = {
             $('#exampleModal').modal('show');
         });
     },
-
 
     addBubbleInfo: function () {
         hereMap.map._group.addEventListener('tap', function (evt) {
