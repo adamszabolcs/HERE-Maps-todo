@@ -85,7 +85,8 @@ let hereMap = {
         let icon = new H.map.Icon('./image/pin.png'),
             coords = {lat: lat, lng: lng},
             marker = new H.map.Marker(coords, {icon: icon});
-        marker.setData(data);
+        let todoTitle = '<div><input type="checkbox">' + data;
+        marker.setData(todoTitle);
 
         this.map._group.addObject(marker);
     },
