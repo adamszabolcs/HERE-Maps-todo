@@ -1,5 +1,6 @@
 package com.codecool.todo.controller;
 
+import com.codecool.todo.model.Status;
 import com.codecool.todo.model.Todo;
 import com.codecool.todo.repository.TodoRepository;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,7 +41,7 @@ public class WebController {
 
     @GetMapping("/list")
     public List<Todo> getList() {
-        List<Todo> todos = todoRepository.findAll();
+        List<Todo> todos = todoRepository.findAllByStatus(Status.ACTIVE);
         return todos;
     }
 
@@ -62,6 +63,7 @@ public class WebController {
                 .title(title)
                 .latitude(latitude)
                 .longitude(longitude)
+                .status(Status.ACTIVE)
                 .build();
         todoRepository.save(todo);
         log.info("todo saved!");
