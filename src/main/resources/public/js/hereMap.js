@@ -76,6 +76,7 @@ let hereMap = {
         this.map._behavior.disable(H.mapevents.Behavior.DBLTAPZOOM);
         this.addUserPosition();
         communication.getMarkers();
+        mapEvent.addModalSubmitListener();
         mapEvent.dblTap();
         this.searchForCategory();
     },
