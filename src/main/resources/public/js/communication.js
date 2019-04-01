@@ -6,7 +6,7 @@ let communication = {
             .then(response => response.json())
             .then(responseData => {
                 hereMap._app_code = responseData.hereMapsAppCode,
-                hereMap._app_id = responseData.hereMapsAppId
+                    hereMap._app_id = responseData.hereMapsAppId
             })
             .then(hereMap.setCoordinates());
     },
@@ -20,11 +20,11 @@ let communication = {
             .then(this.getNearCategories());
     },
 
-    sendTodoToBackend: function(coord, title) {
+    sendTodoToBackend: function (coord, title) {
         let response = JSON.stringify({
-            lat : coord.lat,
-            lng : coord.lng,
-            title : title,
+            lat: coord.lat,
+            lng: coord.lng,
+            title: title,
         });
         fetch("/todo", {
             method: "POST",
@@ -33,6 +33,9 @@ let communication = {
             },
             body: response
         })
+            .then(
+                hereMap.createMarker(coord.lat, coord.lng, title)
+            )
     },
 
     getNearCategories: function () {
